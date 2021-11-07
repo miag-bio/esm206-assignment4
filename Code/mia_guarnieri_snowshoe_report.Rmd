@@ -1,0 +1,43 @@
+---
+title: 'Assignment 4: Exploratory report on juvenile snowshoe hares in Bonanza Creek
+  Experimental Forest'
+author: "Mia Guarnieri"
+date: "11/7/2021"
+output: 
+  html_document: 
+    number_sections: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(here)
+library(lubridate)
+library(dplyr)
+library(effsize)
+library(kableExtra)
+```
+
+#Introduction
+
+A 4 - 5 sentence "mini-introduction" to what this study is exploring, including basic background information about the subject, site and study (with citations as needed), and a brief overview of what is included in the exploratory report. You should probably do this last so you know what’s contained in the report.
+
+#Data and analyses
+
+A 3 - 4 sentence section in which you briefly describe the data, including citation & credit as needed, and provide an overview of the main analysis, statistical methods and tools used.
+
+#Juvenile hare initial investigation
+
+##Annual juvenile hare trap counts 
+
+Count the total number of juvenile hare trappings during each year of the study, and create a finalized data visualization of the counts by year. Include a figure caption below the figure in your report. 
+
+```{r}
+#read in the hare data
+bonanza_hares <- read.csv(here("Data", "bonanza_hares.csv"))
+
+
+
+```
+
