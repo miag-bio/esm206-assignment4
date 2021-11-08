@@ -18,11 +18,12 @@ library(lubridate)
 library(dplyr)
 library(effsize)
 library(kableExtra)
+library(ggbeeswarm)
 ```
 
 # Introduction
 
-A 4 - 5 sentence "mini-introduction" to what this study is exploring, including basic background information about the subject, site and study (with citations as needed), and a brief overview of what is included in the exploratory report. You should probably do this last so you know what’s contained in the report.
+A 4 - 5 sentence "mini-introduction" to what this study is exploring, including basic background information about the subject, site and study (with citations as needed), and a brief overview of what is included in the exploratory report. You should probably do this last so you know what's contained in the report.
 
 # Data and analyses
 
@@ -30,9 +31,9 @@ A 3 - 4 sentence section in which you briefly describe the data, including citat
 
 # Juvenile hare initial investigation
 
-## Annual juvenile hare trap counts 
+## Annual juvenile hare trap counts
 
-Count the total number of juvenile hare trappings during each year of the study, and create a finalized data visualization of the counts by year. Include a figure caption below the figure in your report. 
+This basic bar plot depicts the total number of juvenile hare trappings for each year of the study.
 
 ```{r}
 #read in the hare data
@@ -49,7 +50,7 @@ juv_hares_year <- bonanza_hares %>%
 #visualize this data with a bar graph
 
 ggplot(data = juv_hares_year, aes(x = year)) +
-  geom_bar() +
+  geom_bar(fill = "blue4") +
   labs(x = "Year",
        y = "Juvenile Hares Observed") +
   scale_x_continuous(breaks = seq(from = 1999, to = 2021, by = 1)) +
@@ -60,14 +61,13 @@ juv_hares_annual_count <- juv_hares_year %>%
   count(year)
 ```
 
-**Figure 1:** The total number of juvenile snowshoe hares observed each year at the Bonanza Creek Long Term Ecological Research site between 1999 and 2012.
+**Figure 1:** The total number of juvenile snowshoe hares observed each year at the Bonanza Creek Long Term Ecological Research site between `r min(juv_hares_annual_count$year)` and `r max(juv_hares_annual_count$year)`. Data: Keilland et al. (2017).
 
 ### Takeaway
 
 The maximum number of juvenile hares trapped in one year during this period was `r max(juv_hares_annual_count$n)` during `r juv_hares_annual_count[juv_hares_annual_count$n == max(juv_hares_annual_count$n), ]$year`, and the minimum number of juvenile hares trapped in one year was 0 during 2002 and 2009. The mean number of juvenile hares trapped per year is `r mean(juv_hares_annual_count$n)`, and the median is `r median(juv_hares_annual_count$n)`. The annual number of juvenile hares trapped generally decreased per year, particularly between 1999 and 2000. It is important to note than sampling effort can have an impact on the apparent number of trapped individuals. In future analyses, to ensure that data trends are a result of trends in the populations, sampling effort should be standardized between years (i.e., an equal number of traps should be set, for an equal number of days).
 
-
-## Visualizing juvenile hare weights
+## Visualizing juvenile hare weights by sex and site
 
 Create a finalized data visualization (or visualizations) in which you compare **juvenile hare weights by sex and site (grid)** (ignore other variables). You should include groups where these variables are not recorded (`NA`). Include finalized figure captions below your visualization(s).
 
@@ -88,25 +88,48 @@ juv_hares_boxplot_data <- juv_hares_year %>%
 ggplot(data = juv_hares_boxplot_data, aes(x = sex, y = weight, fill = sex)) +
   scale_fill_manual(values = c("mistyrose", "lightsteelblue", "lightgrey")) +
   geom_boxplot(outlier.color = "black") +
-  geom_point(shape = 1, alpha = 0.8, aes(color = sex)) +
+  geom_beeswarm(shape = 1, alpha = 0.75, aes(color = sex)) +
   scale_color_manual(values = c("palevioletred", "steelblue", "gray42")) +
   facet_wrap(~grid) +
   labs(y = "Body weight (g)",
-       x = "Sex")
+       x = "Sex") +
+  stat_summary(fun = mean, geom = "point", shape = 18, size = 2.5) +
+  theme(legend.position = "none")
 
 ```
-**Figure 2:** Body weight of juvenile snowshoe hares observed at the Bonanza Creek Long Term Ecological Research site between 1999 and 2012, grouped by sex and by observation site.
+
+**Figure 2:** A boxplot of body weights of juvenile snowshoe hares observed at the Bonanza Creek Long Term Ecological Research site between `r min(juv_hares_boxplot_data$year)` and `r max(juv_hares_boxplot_data$year)`, grouped by sex and by observation site. Individual data points are overlaid to show general trends.Box endpoints indicate the 25th and 75th percentile values; the middle black line and black diamond within the box indicate the median and mean value for each sex, respectively. The whiskers correspond to the maximum (upper whisker) and minimum (lower whisker) values, not including outliers (solid black dots). Data: Keilland et al. (2017).
+
+**Table 1:** Summary table of body weight data of juvenile snowshoe hares observed at the Bonanza Creek Long Term Ecological Research site between `r min(juv_hares_boxplot_data$year)` and `r max(juv_hares_boxplot_data$year)`, grouped by sex and by observation site. Only one dead hare of unknown sex was recovered from the Bonanza Black Spruce site, and no weight was taken, so a median value cannot be calculated once N/A values are removed (hence the NaN "Not a Number" value recorded in the table), and other values are N/A. Data: Keilland et al. (2017).
 
 ```{r}
 #make a summary table with juvenile hare weights by sex and site
 
-juv_hares_sex_site_table <- juv_hares_year %>% 
-  group_by(sex, grid) %>% 
-  summarize(Mean = mean(weight),
-            Median = median(weight),
-            Standard_Deviation = sd(weight),
-            Count = n())
+juv_hares_sex_site_table <- juv_hares_boxplot_data %>% #start with the boxplot data (so groups have proper names)
+  group_by(sex, grid) %>% #grouping by sex and site (grid)
+  summarize(Mean = mean(weight, na.rm = TRUE), #designating a column for means
+            Median = median(weight, na.rm  =TRUE), #and one for medians
+            Standard_Deviation = sd(weight, na.rm = TRUE), #and one for standard deviations
+            Count = n()) %>% #and finally one for counts
+  kable(digits = c(2, 2, 2, 2), #setting the number of digits for each column; similar to `round()`)
+        col.names = c("Sex", "Site", "Mean (g)", "Median (g)", "Standard Deviation (g)", "Sample Size"), #naming columns
+        align = "llcccc") %>% #aligning the values centrally except for the species column (left aligned)
+  kable_styling(full_width = FALSE, position = "center", bootstrap_options = c("striped", "hover")) #setting it to not take up the full page width and be center aligned, creating alternate shading for rows to make it easier to see
+
+#call up the table
+
+juv_hares_sex_site_table
 ```
 
+### Takeaway
 
+Median and mean juvenile body weights were higher for male snowshoe hares than female snowshoe hares at all three sites. Female hares tended to have more body weight values in the upper quartile (between the median and the 75th percentile), while male hares tended to have more body weight values in the lower quartile (between the median and the 25th percentile). Male and female hares are largest at the Black Spruce site, with higher mean and median body masses than hares at the other two sites. Body weight measurements of juvenile hares of unknown sex only occurred at the Bonanza Riparian and Bonanza Mature sites, and hares of unknown sex had much lower mean and median weights than either male or female hares at the Bonanza Riparian site.
+
+## Weight comparison of juvenile snowshoe hares by sex
+
+Body weight (in grams) was compared between the sexes in this data table. Sampling site is not included as a variable, but should be investigated in the future. 
+
+```{r}
+
+```
 
