@@ -100,7 +100,7 @@ ggplot(data = juv_hares_boxplot_data, aes(x = sex, y = weight, fill = sex)) +
 
 **Figure 2:** A boxplot of body weights of juvenile snowshoe hares observed at the Bonanza Creek Long Term Ecological Research site between `r min(juv_hares_boxplot_data$year)` and `r max(juv_hares_boxplot_data$year)`, grouped by sex and by observation site. Individual data points are overlaid to show general trends.Box endpoints indicate the 25th and 75th percentile values; the middle black line and black diamond within the box indicate the median and mean value for each sex, respectively. The whiskers correspond to the maximum (upper whisker) and minimum (lower whisker) values, not including outliers (solid black dots). Data: Keilland et al. (2017).
 
-**Table 1:** Summary table of body weight data of juvenile snowshoe hares observed at the Bonanza Creek Long Term Ecological Research site between `r min(juv_hares_boxplot_data$year)` and `r max(juv_hares_boxplot_data$year)`, grouped by sex and by observation site. Only one dead hare of unknown sex was recovered from the Bonanza Black Spruce site, and no weight was taken, so a median value cannot be calculated once N/A values are removed (hence the NaN "Not a Number" value recorded in the table), and other values are N/A. Data: Keilland et al. (2017).
+**Table 1:** Summary statistics table of body weight data of juvenile snowshoe hares observed at the Bonanza Creek Long Term Ecological Research site between `r min(juv_hares_boxplot_data$year)` and `r max(juv_hares_boxplot_data$year)`, grouped by sex and by observation site. Only one dead hare of unknown sex was recovered from the Bonanza Black Spruce site, and no weight was taken, so a median value cannot be calculated once N/A values are removed (hence the NaN "Not a Number" value recorded in the table), and other values are N/A. Data: Keilland et al. (2017).
 
 ```{r}
 #make a summary table with juvenile hare weights by sex and site
@@ -127,9 +127,61 @@ Median and mean juvenile body weights were higher for male snowshoe hares than f
 
 ## Weight comparison of juvenile snowshoe hares by sex
 
-Body weight (in grams) was compared between the sexes in this data table. Sampling site is not included as a variable, but should be investigated in the future. 
+Body weight (in grams) was compared between the sexes in this data table. Sampling site is not included as a variable, but should be investigated in the future. A Cohen's d test (`cohen.d()`) and a Welch two-sample t-test (`t.test()`) were run on the samples of male and female hare weights to determine the size and significance of sex on juvenile hare body weight. Diagnostic plots (not included) revealed the data to be normally distributed.
+
+
+**Table 1:** Summary statistics table of body weight data of juvenile snowshoe hares observed at the Bonanza Creek Long Term Ecological Research site between `r min(juv_hares_boxplot_data$year)` and `r max(juv_hares_boxplot_data$year)`, grouped by sex. Data: Keilland et al. (2017).
 
 ```{r}
+#make a summary table with juvenile hare weights by sex
+
+juv_hares_sex_table <- juv_hares_boxplot_data %>% #start with the boxplot data (so groups have proper names)
+  filter(sex %in% c("Male", "Female")) %>% #filtering for only male and female observations
+  group_by(sex) %>% #grouping by sex 
+  summarize(Mean = mean(weight, na.rm = TRUE), #designating a column for means
+            Median = median(weight, na.rm  =TRUE), #and one for medians
+            Standard_Deviation = sd(weight, na.rm = TRUE), #and one for standard deviations
+            Count = n()) %>% #and finally one for counts
+  kable(digits = c(2, 2, 2, 2), #setting the number of digits for each column; similar to `round()`)
+        col.names = c("Sex", "Mean (g)", "Median (g)", "Standard Deviation (g)", "Sample Size"), #naming columns
+        align = "llcccc") %>% #aligning the values centrally except for the species column (left aligned)
+  kable_styling(full_width = FALSE, position = "center", bootstrap_options = c("striped", "hover")) #setting it to not take up the full page width and be center aligned, creating alternate shading for rows to make it easier to see
+
+#call up the table
+juv_hares_sex_table
+
+
+#exploring normality using a histogram
+ggplot(data = juv_hares_boxplot_data, aes(x = weight)) +
+  geom_histogram() + 
+  facet_wrap(~ sex) #females look very normal, males look slighly more uniform or even bimodal
+
+#exploring normality using a Q-Q plot
+ggplot(data = juv_hares_boxplot_data, aes(sample = weight)) +
+  geom_qq() +
+  facet_wrap(~ sex) #all look fairly linear, safe to assume normality
+
+#estimating effect size with cohen's d test
+juv_hares_male <- juv_hares_boxplot_data %>% #start with boxplot data so names are correct
+  filter(sex == "Male") %>% #keep only data for male hares
+  pull(weight) %>%  #pull out weight values
+  na.omit() #remove NA values
+
+juv_hares_female <- juv_hares_boxplot_data %>% #start with boxplot data so names are correct
+  filter(sex == "Female") %>% #keep only data for female hares
+  pull(weight) %>%  #pull out weight values
+  na.omit() #remove NA values
+
+juv_hares_all <- c(juv_hares_female, juv_hares_male)
+
+cohen_d_test <- cohen.d(juv_hares_male, juv_hares_female) #run the cohen's d test
+
+t_test <- t.test(juv_hares_male, juv_hares_female) #run a two-sample t-test
 
 ```
+
+### Takeaway
+
+Mean weight for male hares (`r round(mean(juv_hares_male), 2)` g) is `r round(mean(juv_hares_male) - mean(juv_hares_female), 2)` g (`r round(abs(1-(mean(juv_hares_male)/mean(juv_hares_female)))*100, 2)`%) larger than mean weight for female hares (`r round(mean(juv_hares_female), 2)` g). According to the `cohen.d()` and `t.test()` run on the data, the effect of sex on body weight is small (Cohen's d = `r round(cohen_d_test$estimate, 2)`) but statistically significant (`r t_test$method`: p = `r round(t_test$p.value, 2)`). A p value of `r round(t_test$p.value, 2)` suggests that there is a `r round((t_test$p.value * 100), 2)` percent chance that if our male and female hare populations did have the same mean, the sample means would be at least `r round(mean(juv_hares_male) - mean(juv_hares_female), 2)` g different.
+
 
