@@ -7,6 +7,7 @@ output:
   html_document: 
     number_sections: yes
     toc: yes
+    theme: lumen
 ---
 
 ```{r setup, include=FALSE}
@@ -30,11 +31,11 @@ This report provides an exploratory overview of differences in juvenile weights 
 
 Snowshoe hare body measurements were collected and made available by Dr. Knut Kielland and colleagues at the at the Bonanza Creek Long Term Ecological Research site in Alaska. The data contain observations for 3197 unique snowshoe hares, both juvenile and adult, collected at three sites between 1999 and 2012. The three sites are listed below, along with identifying data:
 
-**Bonanza Riparian (bonrip):** A flood zone along the Tanana River. Bonanza Riparian consisted of willow (Salix spp.), paper birch (Betula papyrifera), alder (Alnus spp.), white spruce (Picea glauca), fireweed (Epilobium augustifolium) and several grasses.
+**Bonanza Riparian:** A flood zone along the Tanana River. Bonanza Riparian consisted of willow (Salix spp.), paper birch (Betula papyrifera), alder (Alnus spp.), white spruce (Picea glauca), fireweed (Epilobium augustifolium) and several grasses.
 
-**Bonanza Mature (bonmat):** A mature black spruce forest approximately 1 km inland from the river and 2 km from the riparian plot. Consisted of stands of mature white spruce, paper birch, and alder, as well as black spruce (Picea mariana), Labrador tea (Ledum groenlandicum), willows, and prickly rose (Rosa acicularis).
+**Bonanza Mature:** A mature black spruce forest approximately 1 km inland from the river and 2 km from the riparian plot. Consisted of stands of mature white spruce, paper birch, and alder, as well as black spruce (Picea mariana), Labrador tea (Ledum groenlandicum), willows, and prickly rose (Rosa acicularis).
 
-**Bonanza Black Spruce (bonbs):** Located in a mature lowland black spruce stand.
+**Bonanza Black Spruce:** Located in a mature lowland black spruce stand.
 
 Exploratory data visualization and analysis is carried out for juvenile snowshoe hare observations. A basic histogram is used to observe the number of juvenile hares trapped annually during the course of the study, and a faceted, color-coded box plot is used to explore juvenile hare weights grouped by sex and by site. Data tables are used to numerically compare summary statistics for hare weights grouped by sex and site, and then grouped only by sex. A two-sample t-test using a significance level (α) of 0.05 is used to statistically compare the difference in mean weights between male and female juvenile hares, and the difference between male and female hare weights is also described by Cohen's d effect size. The relationship between hind foot length and juvenile hare body mass is explored by simple linear regression. All analyses are in R version 4.0.2 using RStudio version 1.3.1056.
 
