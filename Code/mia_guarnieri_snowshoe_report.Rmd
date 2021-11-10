@@ -59,12 +59,12 @@ juv_hares_year <- bonanza_hares %>%
 
 #visualize this data with a bar graph
 
-ggplot(data = juv_hares_year, aes(x = year)) +
-  geom_bar(fill = "skyblue4") +
-  labs(x = "Year",
+ggplot(data = juv_hares_year, aes(x = year)) + #making a ggplot of hare weights by year
+  geom_bar(fill = "skyblue4") + #designating it as a histogram and updating color
+  labs(x = "Year", #adding labels
        y = "Juvenile Hares Observed") +
-  scale_x_continuous(breaks = seq(from = 1999, to = 2021, by = 1)) +
-  theme(axis.text.x = element_text(angle = 90))
+  scale_x_continuous(breaks = seq(from = 1999, to = 2021, by = 1)) + #adjusting scale to be by year
+  theme(axis.text.x = element_text(angle = 90)) #adjusting x axis text to be at 90 degrees 
 
 #make a new object containing only counts of juvenile hares by year
 juv_hares_annual_count <- juv_hares_year %>% 
@@ -84,27 +84,27 @@ These faceted and color-coded box plots visually compare juvenile hare weights b
 ```{r}
 #formatting the data so labels show up appropriately in graph
 juv_hares_boxplot_data <- juv_hares_year %>% 
-  group_by(sex, grid) %>% 
-  mutate(sex = case_when(
+  group_by(sex, grid) %>% #grouping by these factors
+  mutate(sex = case_when( #replacing the shortened values in the dataset with full names
     sex %in% "f" ~ "Female",
     sex %in% "m" ~ "Male",
     sex %in% NA ~ "Unknown")) %>% 
-  mutate(grid = case_when(
+  mutate(grid = case_when(  #replacing the shortened values in the dataset with full names
     grid %in% "bonbs" ~ "Bonanza Black Spruce",
     grid %in% "bonmat" ~ "Bonanza Mature",
     grid %in% "bonrip" ~ "Bonanza Riparian"))
 
 #make a boxplot of juvenile hare weights by site, with scatterplot points mapped to it
-ggplot(data = juv_hares_boxplot_data, aes(x = sex, y = weight, fill = sex)) +
-  scale_fill_manual(values = c("mistyrose", "lightsteelblue", "lightgrey")) +
-  geom_boxplot(outlier.color = "black") +
-  geom_beeswarm(shape = 1, alpha = 0.65, aes(color = sex)) +
-  scale_color_manual(values = c("palevioletred", "steelblue", "gray42")) +
-  facet_wrap(~grid) +
-  labs(y = "Body weight (g)",
+ggplot(data = juv_hares_boxplot_data, aes(x = sex, y = weight, fill = sex)) + #making the plot
+  scale_fill_manual(values = c("mistyrose", "lightsteelblue", "lightgrey")) + #designating color coding
+  geom_boxplot(outlier.color = "black") + #designating outlier point color and type of plot
+  geom_beeswarm(shape = 1, alpha = 0.65, aes(color = sex)) + #mapping the scatterplot points to the box plot
+  scale_color_manual(values = c("palevioletred", "steelblue", "gray42")) + #designating color coding
+  facet_wrap(~grid) + #grouping by site
+  labs(y = "Body weight (g)", #adding labels
        x = "Sex") +
-  stat_summary(fun = mean, geom = "point", shape = 18, size = 2.5) +
-  theme(legend.position = "none")
+  stat_summary(fun = mean, geom = "point", shape = 18, size = 2.5) + #adjusting point size, shape, opacity
+  theme(legend.position = "none") #removing legend
 
 ```
 
@@ -203,11 +203,11 @@ This simple linear regression explores the correlation between juvenile hare hin
 ```{r}
 #creating a plot of hind foot length (x) vs. juv weight (y)
 
-ggplot(data = juv_hares_year, aes(x = hindft, 
+ggplot(data = juv_hares_year, aes(x = hindft, #creating the plot
                             y = weight)) +
-  geom_point(shape = 18, size = 2) + 
-  geom_smooth(method = "lm", color = "turquoise4") +
-  labs(x = "Hind Foot Length (mm)",
+  geom_point(shape = 18, size = 2) + #designating the plot and adjusting point shape and size
+  geom_smooth(method = "lm", color = "turquoise4") + #adding a linear regression trendline and changing color
+  labs(x = "Hind Foot Length (mm)", #adding labels
        y = "Weight (g)")
 
 #set up the model equation
