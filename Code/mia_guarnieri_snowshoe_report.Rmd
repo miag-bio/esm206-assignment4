@@ -29,7 +29,7 @@ This report provides an exploratory overview of differences in juvenile weights 
 
 # Data and analyses
 
-Snowshoe hare body measurements were collected and made available by Dr. Knut Kielland and colleagues at the at the Bonanza Creek Long Term Ecological Research site in Alaska. The data contain observations for 3197 unique snowshoe hares, both juvenile and adult, collected at three sites between 1999 and 2012. The three sites are listed below, along with identifying data:
+Snowshoe hare body measurements were collected and made available by Dr. Knut Kielland and colleagues at the at the Bonanza Creek Long Term Ecological Research site in Alaska. The data contain observations for 3197 unique snowshoe hares, both juvenile and adult, collected at three sites between 1998 and 2012. Juvenile observations begin in 1999, so that is the earliest year for the data used this exploratory report. The three sites are listed below, along with identifying data:
 
 **Bonanza Riparian:** A flood zone along the Tanana River. Bonanza Riparian consisted of willow (Salix spp.), paper birch (Betula papyrifera), alder (Alnus spp.), white spruce (Picea glauca), fireweed (Epilobium augustifolium) and several grasses.
 
