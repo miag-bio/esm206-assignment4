@@ -43,7 +43,7 @@ Exploratory data visualization and analysis is carried out for juvenile snowshoe
 
 ## Annual juvenile hare trap counts
 
-This basic histograme visually explores the total number of juvenile hares trapped in each year of the study.
+This basic histogram visually explores the total number of juvenile hares trapped in each year of the study.
 
 ```{r}
 #read in the hare data
